@@ -2,6 +2,8 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import { APP_PORT } from './config';
+const path = require('path');
+
 import ACTIONS from './Actions';
 
 const app = express();
@@ -10,6 +12,10 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.static('build'));
+
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 app.get('/', (req, res) => res.send("<h1>Welcome To The Api</h1>"));
 
@@ -62,5 +68,5 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || APP_PORT;
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
